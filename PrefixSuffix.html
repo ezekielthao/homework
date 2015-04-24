@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<title>PrefixSuffixList</title>
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<style type="text/css">
+    .prefix {
+        background-color: blue;
+        color: white;
+        border-right-color: gray;
+        border-right-width: 1px;
+        border-right-style: solid;
+    }
+    
+    .suffix{
+        background-color: purple;
+        color: white;
+        border-left-color: gray;
+        border-left-width: 1px;
+        border-left-style: solid;
+    }
+    
+    .header {
+        border-bottom-color: gray;
+        border-bottom-width: 2px;
+        border-bottom-style: solid;
+    }
+</style>
+</head>
+<body>
+<div class="testAreaWrapper">
+    <table>
+        <tr>
+            <th class="prefix header">Prefix List</th>
+            <th class="suffix header">Suffix List</th>
+        </tr>
+        <tr>
+            <td class="prefix">a</td>
+            <td class="suffix">able</td>
+        </tr>
+        <tr>
+            <td class="prefix">con</td>
+            <td class="suffix">est</td>
+        </tr>
+        <tr>
+            <td class="prefix">ment</td>
+            <td class="suffix">ment</td>
+        </tr>
+    </table>
+    <div><button type="button" id="clickBtn">Merge</button>
+        <span id="mergedListResult">Your merged list is: </span>
+    </div>
+    <div><button type="button" id="mergePrefixListTestBtn" onclick="mergePrefixListTest()">Test</button> function mergePrefixList:<span id="mergePrefixListTestResult"></span></div>
+    <div><button type="button" id="mergeSuffixListTestBtn" onclick="mergeSuffixListTest()">Test</button> function mergeSuffixList:<span id="mergeSuffixListTestResult"></span></div>
+    <div><button type="button" id="sortListTestBtn" onclick="sortListTest()">Test</button> function sortListTestBtn:<span id="sortListTestResult"></span></div>
+    
+</div>
+
+<script type="text/javascript">
+    $( document ).ready(function() {
+        var pL = ["a", "con", "ment"];
+        var sL = ["able", "est", "ment"];
+        var mL=[];
+        $("#clickBtn").click(function() {
+            mL = mergeList(pL, sL);
+            for (var i= 0; i<mL.length; i++) {
+                if (i==mL.length-1) {
+                    $("#mergedListResult").append("&nbsp;<span>"+mL[i]+"</span>");
+                } else {
+                    $("#mergedListResult").append("&nbsp;<span>"+mL[i]+",</span>");
+                }
+            }
+        })
+    });
+    function mergeList(pL, sL) {
+        //merged list
+        var nL = [];
+        nL = mergePrefixList(sL, pL, nL);
+        nL = mergeSuffixList(sL, pL, nL);
+        nL = sortList(nL);
+        return nL;
+    }
+    
+    /*
+    *Add prefix element to merged list if and only if:
+    *none of the elements in the suffix list start with the prefix element
+    */
+    function mergePrefixList(sL, pL, nL) {
+        for (var i=0; i < pL.length; i++) {
+            for (var j=0; j< sL.length; j++) {
+                //check suffix element to see if it starts with prefix element
+                if (sL[j].toLowerCase().indexOf(pL[i].toLowerCase()) == 0) {
+                    break;
+                }
+                if (j==sL.length-1) {
+                    nL.push(pL[i]);
+                }
+            }
+        }
+        return nL;
+    }
+    /*
+    *Add suffix element to merged list if and only if:
+    *suffix element starts with a prefix element from prefix list
+    */
+    function mergeSuffixList(sL, pL, nL) {
+        for (var i=0; i< sL.length; i++) {
+            for (var j=0; j< pL.length; j++) {
+                //check suffix element to see if it starts with prefix element
+                if (sL[i].toLowerCase().indexOf(pL[j].toLowerCase()) == 0) {
+                    //add suffix element if it starts with prefix
+                    nL.push(sL[i]);
+                    break;
+                }
+            }
+        }
+        return nL;
+    }
+    
+    /*
+    *Takes in list and sorts alphabetically
+    */
+    function sortList(list) {
+        
+        return list.sort();
+    }
+    
+    function mergePrefixListTest(){
+        var pL = ["a", "pre"];
+        var sL = ["ant", "or"];
+        var nL= [];
+        var nL = mergePrefixList(sL, pL, nL);
+        //Only the element "pre" should be in the list
+        if (nL.length==1 && nL[0]=="pre") {
+            $("#mergePrefixListTestResult")
+                .html("Pass")
+                .css("background-color", "green")
+                .css("color", "white");
+        } else{
+            $("#mergePrefixListTestResult")
+                .html("Fail")
+                .css("background-color", "red")
+                .css("color", "white");;
+        }
+        
+    }
+    function mergeSuffixListTest(){
+        var pL = ["a", "pre"];
+        var sL = ["ant", "or"];
+        var nL= [];
+        var nL = mergeSuffixList(sL, pL, nL);
+        //Only the element "ant" should be in the list
+        if (nL.length==1 && nL[0]=="ant") {
+            $("#mergeSuffixListTestResult")
+                .html("Pass")
+                .css("background-color", "green")
+                .css("color", "white");
+        } else{
+            $("#mergeSuffixListTestResult")
+                .html("Fail")
+                .css("background-color", "red")
+                .css("color", "white");;
+        }
+    }
+    function sortListTest(){
+        var tL = ["c", "b", "a"];
+        tL = sortList(tL);
+        if (tL[0]=="a" && tL[1] == "b" && tL[2]=="c") {
+            $("#sortListTestResult")
+                .html("Pass")
+                .css("background-color", "green")
+                .css("color", "white");
+        } else {
+           $("#sortListTestResult")
+               .html("Fail")
+               .css("background-color", "red")
+               .css("color", "white");
+        }
+        
+    };
+</script>
+</body>
+</html>
